@@ -4,17 +4,22 @@
 #include <time.h>
 #include "linked_list.h"
 
-struct song_node *insert_front(struct song_node *front, char[] name, char[] artist) {
+struct song_node *insert_front(struct song_node *front, char name[], char artist[]) {
+    printf("Inserting \"%s\" by %s\n", name, artist);
+    //name = lowerfy(name);
+    artist = lowerfy(artist);
     struct song_node *new = (struct song_node *)malloc(sizeof(struct song_node));
-    new->name = name;
-    new->artist = artist;
+    strcpy(new->name, name);
+    strcpy(new->artist, artist);
     new->next = front;
     return new;
 }
 
-struct song_node *insert_order(struct song_node *front, char[] name, char[] artist) {
+struct song_node *insert_order(struct song_node *front, char name[], char artist[]) {
     /* Loop through the artist names. If the new song's artist already has songs in the
     linked list, loop through the song names too. */
+    name = lowerfy(name);
+    artist = lowerfy(artist);
     // base case, front is null
     if (!front) {
         return insert_front(front, name, artist);
@@ -48,7 +53,8 @@ void print_list(struct song_node *front) {
     }
 }
 
-struct song_node *find_song(struct song_node *front, char[] name) {
+struct song_node *find_song(struct song_node *front, char name[]) {
+    name = lowerfy(name);
     struct song_node *loop = front;
     while (loop && strcmp(name, loop->name)) {
         loop = loop->next;
@@ -56,7 +62,8 @@ struct song_node *find_song(struct song_node *front, char[] name) {
     return loop;
 }
 
-struct song_node *find_artist(struct song_node *front, char[] artist) {
+struct song_node *find_artist(struct song_node *front, char artist[]) {
+    artist = lowerfy(artist);
     struct song_node *loop = front;
     while (loop && strcmp(artist, loop->artist)) {
         loop = loop->next;
@@ -86,7 +93,8 @@ struct song_node *find_random_song(struct song_node *front) {
     return loop;
 }
 
-struct song_node *remove_node(struct song_node *front, char[] name) {
+struct song_node *remove_node(struct song_node *front, char name[]) {
+    name = lowerfy(name);
     if (!front) {
         return front;
     }
@@ -121,4 +129,16 @@ struct song_node *free_list(struct song_node *front) {
         loop = temp;
     }
     return front;
+}
+
+char *lowerfy(char str[]) {
+    printf("Blah %s\n", str);
+    
+    int i;
+    for (i = 0; str[i]; i ++) {
+        printf("%c\n", tolower(str[i]));
+        str[i] = tolower(str[i]);
+    }
+    printf("Blah %s\n", str);
+    return str;
 }
