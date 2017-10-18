@@ -9,7 +9,7 @@ struct song_node *insert_front(struct song_node *front, char name[], char artist
     srand(time(NULL));
     lowerfy(name);
     lowerfy(artist);
-    printf("Inserting %s -- \"%s\"\n", name, artist);
+    //printf("Inserting %s -- \"%s\"\n", name, artist);
     struct song_node *new = (struct song_node *)malloc(sizeof(struct song_node));
     strcpy(new->name, name);
     strcpy(new->artist, artist);
@@ -48,7 +48,7 @@ struct song_node *insert_order(struct song_node *front, char name[], char artist
     return front;
 }
 
-void print_song(struct song_node *song) {
+void print_node(struct song_node *song) {
     printf("%s -- \"%s\"\n", song->artist, song->name);
 }
 
@@ -63,18 +63,18 @@ void print_list(struct song_node *front) {
     printf("\n");
 }
 
-struct song_node *find_song(struct song_node *front, char name[], char artist[]) {
+struct song_node *find_node(struct song_node *front, char name[], char artist[]) {
     lowerfy(name);
     lowerfy(artist);
     //printf("Finding %s -- \"%s\"\n", name, artist);
-    struct song_node *loop = find_artist(front, artist);
+    struct song_node *loop = find_artist_node(front, artist);
     while (loop && strcmp(name, loop->name)) {
         loop = loop->next;
     }
     return loop;
 }
 
-struct song_node *find_artist(struct song_node *front, char artist[]) {
+struct song_node *find_artist_node(struct song_node *front, char artist[]) {
     lowerfy(artist);
     //printf("Finding first song by %s\n", artist);
     struct song_node *loop = front;
@@ -84,7 +84,7 @@ struct song_node *find_artist(struct song_node *front, char artist[]) {
     return loop;
 }
 
-struct song_node *find_random_song(struct song_node *front) {
+struct song_node *find_random_node(struct song_node *front) {
     if (!front) return NULL;
     
     struct song_node *loop = front;
@@ -107,7 +107,7 @@ struct song_node *remove_node(struct song_node *front, char name[], char artist[
     lowerfy(name);
     lowerfy(artist);
     //printf("Removing \"%s\" by %s\n", name, artist);
-    if (front == find_song(front, name, artist)) {
+    if (front == find_song_node(front, name, artist)) {
         struct song_node *new_front = front->next;
         free(front);
         front = 0;

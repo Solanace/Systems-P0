@@ -6,51 +6,62 @@
 #include "linked_list.h"
 
 int main() {
-    printf("Testing linked_list.c\n");
+    printf("LINKED LIST TESTS\n");
     struct song_node *head = 0;
     
-    printf("Inserting songs:\n----------\n");
+    printf("==========\nTesting insert_order:\n----------\n");
     char name[256] = "Electric Jazz";
     char artist[256] = "Bobert";
     head = insert_order(head, name, artist);
     strcpy(name, "Frank");
     strcpy(artist, "Budding Soldier");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
     strcpy(name, "Fright for Late Night");
     strcpy(artist, "Budding Soldier");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
     strcpy(name, "The Swallow");
     strcpy(artist, "Ballast");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
     strcpy(name, "Sing Me a Song");
     strcpy(artist, "Zharnach");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
     strcpy(name, "Jill's Jellies");
     strcpy(artist, "Bobert");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
     strcpy(name, "My Mice");
     strcpy(artist, "Bobert");
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     head = insert_order(head, name, artist);
-    printf("----------\nPrinting list of songs:\n----------\n");
+    
+    printf("----------\nTesting print_list:\n----------\n");
     print_list(head);
-    printf("----------\nFinding songs and artists:\n----------\n");
-    struct song_node *random = find_random_song(head);
-    printf("Finding %s -- \"%s\" and printing songs following it:\n", random->artist, random->name);
-    print_list(find_song(head, random->name, random->artist));
-    random = find_random_song(head);
-    printf("Finding first song by %s and printing songs following it:\n", random->artist);
-    print_list(find_artist(head, random->artist));
-    printf("----------\nShuffler enabled:\n----------\n");
-    print_song(find_random_song(head));
-    print_song(find_random_song(head));
-    print_song(find_random_song(head));
-    printf("----------\nRemoving songs:\n----------\n");
-    random = find_random_song(head);
+    
+    printf("----------\nTesting find_node and find_artist:\n----------\n");
+    struct song_node *random = find_random_node(head);
+    printf("Finding %s -- \"%s\" and printing nodes following it:\n", random->artist, random->name);
+    print_list(find_node(head, random->name, random->artist));
+    random = find_random_node(head);
+    printf("Finding first node by %s and printing nodes following it:\n", random->artist);
+    print_list(find_artist_node(head, random->artist));
+    
+    printf("----------\nTesting find_random_node:\n----------\n");
+    print_node(find_random_node(head));
+    print_node(find_random_node(head));
+    print_node(find_random_node(head));
+    
+    printf("----------\nTesting remove_node:\n----------\n");
+    random = find_random_node(head);
     printf("Removing %s -- \"%s\"\n", random->artist, random->name);
     head = remove_node(head, random->name, random->artist);
-    printf("New song list:\n");
+    printf("New node list:\n");
     print_list(head);
-    printf("----------\nFreeing entire list:\n----------\n");
+    
+    printf("----------\nTesting free_list:\n----------\n");
     head = free_list(head);
     print_list(head);
     return 0;
