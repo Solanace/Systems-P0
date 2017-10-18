@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include "linked_list.h"
 
 struct song_node *insert_front(struct song_node *front, char name[], char artist[]) {
-    printf("Inserting \"%s\" by %s\n", name, artist);
-    //name = lowerfy(name);
-    artist = lowerfy(artist);
+    srand(time(NULL));
+    lowerfy(name);
+    lowerfy(artist);
+    printf("Inserting %s -- \"%s\"\n", name, artist);
     struct song_node *new = (struct song_node *)malloc(sizeof(struct song_node));
     strcpy(new->name, name);
     strcpy(new->artist, artist);
@@ -18,44 +20,54 @@ struct song_node *insert_front(struct song_node *front, char name[], char artist
 struct song_node *insert_order(struct song_node *front, char name[], char artist[]) {
     /* Loop through the artist names. If the new song's artist already has songs in the
     linked list, loop through the song names too. */
-    name = lowerfy(name);
-    artist = lowerfy(artist);
+    lowerfy(name);
+    lowerfy(artist);
     // base case, front is null
-    if (!front) {
-        return insert_front(front, name, artist);
-    }
+    if (!front) return insert_front(0, name, artist);
     // front is not null
     struct song_node *prev = front;
-    struct song_node *next = front->next;
+    struct song_node *loop = front->next;
     // loop through authors, stop at the one before the new song's
-    while (next && strcmp(artist, next->artist) > 0) {
+    while (loop && strcmp(artist, loop->artist) > 0) {
+        //printf("%s goes after %s\n", artist, prev->artist);
         prev = prev->next;
-        next = next->next;
+        loop = loop->next;
     }
     // loop through songs if necessary
-    if (!strcmp(artist, next->artist)) {
-        while (next && strcmp(name, next->name) > 0) {
-            prev = prev->next;
-            next = next->next;
-        }
+    while (loop && !strcmp(artist, loop->artist) && strcmp(name, loop->name) > 0) {
+        //printf("%s goes after %s\n", artist, prev->artist);
+        prev = prev->next;
+        loop = loop->next;
     }
-    
-    prev->next = insert_front(next, name, artist);
-    prev->next->next = next;
+    // artist precedes front
+    if (prev == front && strcmp(artist, front->artist) < 0) {
+        return insert_front(front, name, artist);
+    }
+    prev->next = insert_front(loop, name, artist);
+    prev->next->next = loop;
     return front;
 }
 
-void print_list(struct song_node *front) {
-    printf("Printing songs:\n");
-    while (front) {
-        printf("\"%s\" by %s\n", front->name, front->artist);
-        front = front->next;
-    }
+void print_song(struct song_node *song) {
+    printf("%s -- \"%s\"\n", song->artist, song->name);
 }
 
-struct song_node *find_song(struct song_node *front, char name[]) {
-    name = lowerfy(name);
+void print_list(struct song_node *front) {
+    if (!front) return;
     struct song_node *loop = front;
+    while (loop) {
+        //print_song(loop);
+        printf("%s -- \"%s\" | ", loop->artist, loop->name);
+        loop = loop->next;
+    }
+    printf("\n");
+}
+
+struct song_node *find_song(struct song_node *front, char name[], char artist[]) {
+    lowerfy(name);
+    lowerfy(artist);
+    //printf("Finding %s -- \"%s\"\n", name, artist);
+    struct song_node *loop = find_artist(front, artist);
     while (loop && strcmp(name, loop->name)) {
         loop = loop->next;
     }
@@ -63,7 +75,8 @@ struct song_node *find_song(struct song_node *front, char name[]) {
 }
 
 struct song_node *find_artist(struct song_node *front, char artist[]) {
-    artist = lowerfy(artist);
+    lowerfy(artist);
+    //printf("Finding first song by %s\n", artist);
     struct song_node *loop = front;
     while (loop && strcmp(artist, loop->artist)) {
         loop = loop->next;
@@ -72,11 +85,8 @@ struct song_node *find_artist(struct song_node *front, char artist[]) {
 }
 
 struct song_node *find_random_song(struct song_node *front) {
-    if (!front) {
-        return front;
-    }
+    if (!front) return NULL;
     
-    srand(time(NULL));
     struct song_node *loop = front;
     int i = 0;
     while (loop) {
@@ -93,30 +103,27 @@ struct song_node *find_random_song(struct song_node *front) {
     return loop;
 }
 
-struct song_node *remove_node(struct song_node *front, char name[]) {
-    name = lowerfy(name);
-    if (!front) {
-        return front;
-    }
-    
-    if (!strcmp(name, front->name)) {
+struct song_node *remove_node(struct song_node *front, char name[], char artist[]) {
+    lowerfy(name);
+    lowerfy(artist);
+    //printf("Removing \"%s\" by %s\n", name, artist);
+    if (front == find_song(front, name, artist)) {
         struct song_node *new_front = front->next;
         free(front);
+        front = 0;
         return new_front;
     }
-    
-    struct song_node *loop = front;
-    while (loop->next && strcmp(name, loop->next->name)) {
+    struct song_node *prev = front;
+    struct song_node *loop = prev->next;
+    while (loop && strcmp(name, loop->name)) {
+        prev = prev->next;
         loop = loop->next;
     }
-    
-    if (!loop->next) {
-        return NULL;
+    if (loop && !strcmp(name, loop->name)) {
+        prev->next = loop->next;
+        free(loop);
+        loop = 0;
     }
-    
-    struct song_node *temp = loop->next->next;
-    free(loop->next);
-    loop->next = temp;
     return front;
 }
 
@@ -125,20 +132,16 @@ struct song_node *free_list(struct song_node *front) {
     while (loop) {
         struct song_node *temp = loop->next;
         free(loop);
-        loop = 0;
         loop = temp;
     }
+    front = 0;
     return front;
 }
 
 char *lowerfy(char str[]) {
-    printf("Blah %s\n", str);
-    
     int i;
     for (i = 0; str[i]; i ++) {
-        printf("%c\n", tolower(str[i]));
         str[i] = tolower(str[i]);
     }
-    printf("Blah %s\n", str);
     return str;
 }
