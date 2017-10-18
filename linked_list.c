@@ -107,7 +107,7 @@ struct song_node *remove_node(struct song_node *front, char name[], char artist[
     lowerfy(name);
     lowerfy(artist);
     //printf("Removing \"%s\" by %s\n", name, artist);
-    if (front == find_song_node(front, name, artist)) {
+    if (front == find_node(front, name, artist)) {
         struct song_node *new_front = front->next;
         free(front);
         front = 0;
