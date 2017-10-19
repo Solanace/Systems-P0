@@ -46,7 +46,7 @@ int main() {
     printf("--------------------\nTesting print_list:\n--------------------\n");
     print_list(head);
     
-    printf("--------------------\nTesting find_node and find_artist:\n--------------------\n");
+    printf("--------------------\nTesting find_node and find_artist_node:\n--------------------\n");
     struct song_node *random = find_random_node(head);
     printf("Finding %s -- \"%s\" and printing nodes following it:\n", random->artist, random->name);
     print_list(find_node(head, random->name, random->artist));
