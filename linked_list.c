@@ -43,24 +43,33 @@ struct song_node *insert_order(struct song_node *front, char name[], char artist
     if (prev == front && strcmp(artist, front->artist) < 0) {
         return insert_front(front, name, artist);
     }
+    // name precedes front
+    /*if (prev == front && strcmp(artist, front->artist) == 0 && strcmp(name, front->name) < 0) {
+        return insert_front(front, name, artist);
+    }*/
     prev->next = insert_front(loop, name, artist);
     prev->next->next = loop;
+    //printf("%s -- \"%s\" goes after %s -- \"%s\"\n", artist, name, prev->artist, prev->name);
     return front;
 }
 
 void print_node(struct song_node *song) {
+    if (!song) {
+        printf("NO SONG DETECTED\n");
+        return;
+    }
     printf("%s -- \"%s\"\n", song->artist, song->name);
 }
 
 void print_list(struct song_node *front) {
     if (!front) return;
     struct song_node *loop = front;
-    while (loop) {
+    while (loop->next) {
         //print_song(loop);
         printf("%s -- \"%s\" | ", loop->artist, loop->name);
         loop = loop->next;
     }
-    printf("\n");
+    printf("%s -- \"%s\"\n", loop->artist, loop->name);
 }
 
 struct song_node *find_node(struct song_node *front, char name[], char artist[]) {
